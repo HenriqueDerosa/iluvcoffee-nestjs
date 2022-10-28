@@ -24,13 +24,14 @@ interface FindOneParams {
 export class CoffeesController {
   constructor(private readonly coffeeServices: CoffeesService) {}
   @Get()
-  findAll(@Query() paginationQuery): Coffee[] {
-    return this.coffeeServices.findAll();
+  async findAll(@Query() paginationQuery): Promise<Coffee[]> {
+    const { limit, offset } = paginationQuery;
     // return `List of all coffees. Limit: ${limit}, offset ${offset}`;
+    return await this.coffeeServices.findAll(limit, offset);
   }
 
   @Get(':id')
-  findOne(@Param() params: FindOneParams): Coffee {
+  async findOne(@Param() params: FindOneParams): Promise<Coffee> {
     const coffee = this.coffeeServices.findOne(params.id);
 
     if (!coffee) {
@@ -44,9 +45,8 @@ export class CoffeesController {
 
   @Post()
   @HttpCode(HttpStatus.GONE)
-  create(@Body() createCoffeeDto: CreateCoffeeDto): Coffee {
-    console.log(createCoffeeDto instanceof CreateCoffeeDto);
-    return this.coffeeServices.create(createCoffeeDto);
+  async create(@Body() createCoffeeDto: CreateCoffeeDto): Promise<Coffee> {
+    return await this.coffeeServices.create(createCoffeeDto);
   }
 
   @Patch(':id')
