@@ -6,11 +6,17 @@ import {
   HttpCode,
   HttpException,
   HttpStatus,
+  Inject,
   Param,
   Patch,
   Post,
   Query,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
+import { Request } from 'express';
+import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 import { CoffeesService } from './coffees.service';
 import { CreateCoffeeDto } from './dto/create-coffee.dto';
 import { UpdateCoffeeDto } from './dto/update-coffee.dto';
@@ -22,12 +28,19 @@ interface FindOneParams {
 
 @Controller('coffees')
 export class CoffeesController {
-  constructor(private readonly coffeeServices: CoffeesService) {}
+  constructor(
+    private readonly coffeeServices: CoffeesService,
+    @Inject(REQUEST) private readonly request: Request,
+  ) {
+    console.log('REQUESTED > ', request.url);
+    console.log('→ → CoffeesController created');
+  }
+
   @Get()
-  async findAll(@Query() paginationQuery): Promise<Coffee[]> {
-    const { limit, offset } = paginationQuery;
-    // return `List of all coffees. Limit: ${limit}, offset ${offset}`;
-    return await this.coffeeServices.findAll(limit, offset);
+  async findAll(
+    @Query() paginationQuery: PaginationQueryDto,
+  ): Promise<Coffee[]> {
+    return await this.coffeeServices.findAll(paginationQuery);
   }
 
   @Get(':id')
@@ -50,7 +63,7 @@ export class CoffeesController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() body: UpdateCoffeeDto) {
+  update(@Param('id') id: string, @Body(ValidationPipe) body: UpdateCoffeeDto) {
     return this.coffeeServices.update(id, body);
   }
 
