@@ -2,7 +2,7 @@ import { Injectable, Module, Scope } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 // import { DatabaseModule } from 'src/database/database.module';
-import { Event } from 'src/events/entities/event.entity';
+import { Event } from '../events/entities/event.entity';
 import { DataSource } from 'typeorm';
 import { COFFEE_BRANDS } from './coffees.constants';
 import { CoffeesController } from './coffees.controller';
@@ -33,12 +33,12 @@ export class CoffeeBrandsFactory {
   providers: [
     CoffeesService,
     CoffeeBrandsFactory,
-    {
-      provide: COFFEE_BRANDS,
-      useFactory: (factory: CoffeeBrandsFactory, dataSource: DataSource) =>
-        factory.create(dataSource),
-      inject: [CoffeeBrandsFactory, DataSource],
-    },
+    // {
+    //   provide: COFFEE_BRANDS,
+    //   useFactory: (factory: CoffeeBrandsFactory, dataSource: DataSource) =>
+    //     factory.create(dataSource),
+    //   inject: [CoffeeBrandsFactory, DataSource],
+    // },
   ],
   exports: [CoffeesService],
 })
